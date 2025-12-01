@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: portfolio-admin-bot
+    env: php
+    buildCommand: composer install --no-dev --optimize-autoloader && php artisan config:cache && php artisan route:cache && php artisan migrate --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: TELEGRAM_BOT_TOKEN
+        value: 8304882644:AAEPstQPNjWMAtOYhRul4Rgj6rVlIb8asgo
+      - key: TELEGRAM_CHAT_ID
+        value: 1473509897
