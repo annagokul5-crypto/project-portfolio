@@ -41,83 +41,41 @@
     <section class="project-detail-section">
         <div class="project-detail-container">
             <!-- Project Title -->
-            <h1 class="section-title">KIT Connect</h1>
-
-            <!-- Screenshots Gallery -->
+            @php
+                $project = \App\Models\Project::where('title', 'Kit Connect')->first();
+            @endphp
+            <h1 class="section-title">{{ $project->title }}</h1>
+                <!-- Screenshots Gallery -->
             <div class="screenshots-section">
                 <h2 class="subsection-title">Project Screenshots</h2>
                 <div class="screenshots-grid">
                     <!-- Screenshot Card 1 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/kitconnect/splash.jpg') }}" alt="Splash Screen">
+                    @php
+                        $shots = \App\Models\ProjectScreenshot::where('project_id', 6)->get();  // 2 = KIT Connect
+                    @endphp
+                @foreach($shots as $shot)
+                        <div class="screenshot-card">
+                            <div class="screenshot-image">
+                                <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">
+                            </div>
+                            <h3 class="screenshot-title">{{ $shot->title }}</h3>
                         </div>
-                        <h3 class="screenshot-title">Splash Screen</h3>
-                    </div>
-
-                    <!-- Screenshot Card 2 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/kitconnect/contacts.jpg') }}" alt="Contacts List">
-                        </div>
-                        <h3 class="screenshot-title">Contacts List</h3>
-                    </div>
-
-                    <!-- Screenshot Card 3 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/kitconnect/departments.jpg') }}" alt="Departments">
-                        </div>
-                        <h3 class="screenshot-title">Department View</h3>
-                    </div>
-
-                    <!-- Screenshot Card 4 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/kitconnect/profile.jpg') }}" alt="Profile Details">
-                        </div>
-                        <h3 class="screenshot-title">Profile Details</h3>
-                    </div>
-
-                    <!-- Screenshot Card 5 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/kitconnect/search.jpg') }}" alt="Search Function">
-                        </div>
-                        <h3 class="screenshot-title">Search Contacts</h3>
-                    </div>
-
-                    <!-- Screenshot Card 6 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/kitconnect/settings.jpg') }}" alt="Settings">
-                        </div>
-                        <h3 class="screenshot-title">App Settings</h3>
-                    </div>
+                    @endforeach
                 </div>
             </div>
-
             <!-- Project Description -->
             <div class="description-section">
                 <h2 class="subsection-title">Project Description</h2>
                 <div class="description-content">
-                    <p>
-                        KIT Connect is a smart mobile application designed to streamline contact management
-                        for college departments. Built with Flutter, this app provides an intuitive interface
-                        for accessing and managing department contacts efficiently.
-                    </p>
+                    <p>{{ $project->description ?? $project->short_description }}</p>
+
                     <h3 class="feature-title">Key Features:</h3>
                     <ul class="feature-list">
-                        <li>Comprehensive contact directory for all departments</li>
-                        <li>Quick search and filter functionality</li>
-                        <li>Direct call and email integration</li>
-                        <li>Department-wise categorization</li>
-                        <li>Offline access to saved contacts</li>
-                        <li>Real-time contact updates</li>
-                        <li>Clean and intuitive user interface</li>
-                        <li>Quick dial and favorites system</li>
-                        <li>Share contact details easily</li>
-                        <li>Dark mode support</li>
+                        @foreach(explode("\n", $project->features ?? '') as $feature)
+                            @if(trim($feature) !== '')
+                                <li>{{ trim($feature) }}</li>
+                            @endif
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -126,29 +84,27 @@
             <div class="tools-section">
                 <h2 class="subsection-title">Tools & Languages Used</h2>
                 <div class="tools-list">
-                    <span class="tool-item">Dart</span>
-                    <span class="tool-item">Flutter</span>
-                    <span class="tool-item">Android Studio</span>
-                    <span class="tool-item">Firebase</span>
-                    <span class="tool-item">Node.js</span>
-                    <span class="tool-item">MongoDB</span>
-                    <span class="tool-item">Git</span>
-                    <span class="tool-item">Figma</span>
+                    @foreach(explode(',', $project->tools ?? '') as $tool)
+                        @if(trim($tool) !== '')
+                            <span class="tool-item">{{ trim($tool) }}</span>
+                        @endif
+                    @endforeach
                 </div>
             </div>
-
-            <!-- Website Link -->
             <div class="link-section">
-                <h2 class="subsection-title">Playstore Link</h2>
-                <p class="coming-soon">Coming Soon</p>
+                <h2 class="subsection-title">Website Link</h2>
+                @if($project->live_link)
+                    <a href="{{ $project->live_link }}" class="coming-soon">{{ $project->live_link }}</a>
+                @else
+                    <p class="coming-soon">Coming Soon</p>
+                @endif
             </div>
-
-            <!-- Back Button -->
-            <div class="back-button-container">
-                <a href="{{ url('/') }}#projects" class="back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Projects
-                </a>
-            </div>
+                </div>
+        <!-- Back Button -->
+        <div class="back-button-container">
+            <a href="{{ url('/') }}#projects" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </a>
         </div>
     </section>
 
@@ -161,6 +117,8 @@
             <a href="{{ url('/') }}#skills">Skills</a>
             <a href="{{ url('/') }}#contact">Contact</a>
         </div>
-        <p class="copyright">&copy; 2025 Gokulraju A. All Rights Reserved.</p>
+        <p class="copyright">
+            &copy; {{ $footerYear ?? date('Y') }} Gokulraju All Rights Reserved.
+        </p>
     </footer>
 @endsection

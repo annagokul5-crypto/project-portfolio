@@ -41,59 +41,29 @@
     <section class="project-detail-section">
         <div class="project-detail-container">
             <!-- Project Title -->
-            <h1 class="section-title">E-Commerce Web Application</h1>
+            @php
+                $project = \App\Models\Project::where('title', 'Ecommerce website')->first();
+            @endphp
+
+            <h1 class="section-title">{{ $project->title }}</h1>
 
             <!-- Screenshots Gallery -->
             <div class="screenshots-section">
                 <h2 class="subsection-title">Project Screenshots</h2>
                 <div class="screenshots-grid">
                     <!-- Screenshot Card 1 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/ecommerce/home.jpg') }}" alt="Home Page">
+                    @php
+                        $shots = \App\Models\ProjectScreenshot::where('project_id', 4)->get();  // 2 = KIT Connect
+                    @endphp
+                    @foreach($shots as $shot)
+                        <div class="screenshot-card">
+                            <div class="screenshot-image">
+                                <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">
+                            </div>
+                            <h3 class="screenshot-title">{{ $shot->title }}</h3>
                         </div>
-                        <h3 class="screenshot-title">Home Page</h3>
-                    </div>
+                    @endforeach
 
-                    <!-- Screenshot Card 2 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/ecommerce/products.jpg') }}" alt="Products Page">
-                        </div>
-                        <h3 class="screenshot-title">Products Page</h3>
-                    </div>
-
-                    <!-- Screenshot Card 3 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/ecommerce/cart.jpg') }}" alt="Shopping Cart">
-                        </div>
-                        <h3 class="screenshot-title">Shopping Cart</h3>
-                    </div>
-
-                    <!-- Screenshot Card 4 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/ecommerce/checkout.jpg') }}" alt="Checkout Page">
-                        </div>
-                        <h3 class="screenshot-title">Checkout Page</h3>
-                    </div>
-
-                    <!-- Screenshot Card 5 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/ecommerce/admin.jpg') }}" alt="Admin Dashboard">
-                        </div>
-                        <h3 class="screenshot-title">Admin Dashboard</h3>
-                    </div>
-
-                    <!-- Screenshot Card 6 -->
-                    <div class="screenshot-card">
-                        <div class="screenshot-image">
-                            <img src="{{ asset('images/projects/ecommerce/login.jpg') }}" alt="Login Page">
-                        </div>
-                        <h3 class="screenshot-title">User Login</h3>
-                    </div>
                 </div>
             </div>
 
@@ -101,23 +71,15 @@
             <div class="description-section">
                 <h2 class="subsection-title">Project Description</h2>
                 <div class="description-content">
-                    <p>
-                        A comprehensive e-commerce web application developed using modern web technologies.
-                        This platform provides a seamless shopping experience for users while offering robust
-                        management tools for administrators.
-                    </p>
+                    <p>{{ $project->description }}</p>
+
                     <h3 class="feature-title">Key Features:</h3>
                     <ul class="feature-list">
-                        <li>User authentication and authorization system</li>
-                        <li>Product catalog with advanced search and filtering</li>
-                        <li>Shopping cart functionality with real-time updates</li>
-                        <li>Secure payment gateway integration</li>
-                        <li>Order tracking and management system</li>
-                        <li>Admin dashboard for inventory management</li>
-                        <li>Responsive design for all devices</li>
-                        <li>Email notifications for orders and updates</li>
-                        <li>Product reviews and ratings system</li>
-                        <li>Wishlist functionality for users</li>
+                        @foreach(explode("\n", $project->features ?? '') as $feature)
+                            @if(trim($feature) !== '')
+                                <li>{{ trim($feature) }}</li>
+                            @endif
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -126,22 +88,24 @@
             <div class="tools-section">
                 <h2 class="subsection-title">Tools & Languages Used</h2>
                 <div class="tools-list">
-                    <span class="tool-item">HTML</span>
-                    <span class="tool-item">CSS</span>
-                    <span class="tool-item">JavaScript</span>
-                    <span class="tool-item">Bootstrap</span>
-                    <span class="tool-item">Laravel</span>
-                    <span class="tool-item">PHP</span>
-                    <span class="tool-item">MySQL</span>
-                    <span class="tool-item">Git</span>
+                    @foreach(explode(',', $project->tools ?? '') as $tool)
+                        @if(trim($tool) !== '')
+                            <span class="tool-item">{{ trim($tool) }}</span>
+                        @endif
+                    @endforeach
                 </div>
             </div>
 
             <!-- Website Link -->
             <div class="link-section">
                 <h2 class="subsection-title">Website Link</h2>
-                <p class="coming-soon">Coming Soon</p>
+                @if($project->live_link)
+                    <a href="{{ $project->live_link }}" class="coming-soon">{{ $project->live_link }}</a>
+                @else
+                    <p class="coming-soon">Coming Soon</p>
+                @endif
             </div>
+
 
             <!-- Back Button -->
             <div class="back-button-container">
@@ -161,6 +125,7 @@
             <a href="{{ url('/') }}#skills">Skills</a>
             <a href="{{ url('/') }}#contact">Contact</a>
         </div>
-        <p class="copyright">&copy; 2025 Gokulraju A. All Rights Reserved.</p>
+        <p class="copyright">&copy; {{ $footerYear }} Gokulraju All Rights Reserved.</p>
+
     </footer>
 @endsection

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->text('features')->nullable();
-            $table->string('tools');
+            $table->string('tools')->nullable();
             $table->string('status')->default('ongoing');
             $table->string('github_link')->nullable();
             $table->string('live_link')->nullable();

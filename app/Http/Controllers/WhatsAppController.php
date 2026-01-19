@@ -72,4 +72,12 @@ class WhatsAppController extends Controller
 
         return response('', 200);
     }
+    public function twilioWebhook(Request $request)
+    {
+        $body = $request->input('Body'); // "footer:2025 to 2026"
+        \Log::info('Twilio WA', $request->all());
+
+        // TODO: parse $body and update footer setting
+    }
+
 }

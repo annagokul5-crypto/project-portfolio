@@ -11,15 +11,25 @@ class Project extends Model
 
     protected $fillable = [
         'title',
+        'short_description',
         'description',
-        'image_url',
-        'github_url',
-        'live_url',
-        'technologies',
-        'is_featured'
+        'features',
+        'tools',
+        'status',
+        'github_link',
+        'live_link',
+        'order_index',
     ];
+
+
 
     protected $casts = [
         'technologies' => 'array'
     ];
+
+    public function screenshots()
+    {
+        return $this->hasMany(ProjectScreenshot::class);
+    }
+
 }

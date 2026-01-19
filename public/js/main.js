@@ -156,116 +156,104 @@ const animateSkills = () => {
 window.addEventListener('scroll', animateSkills);
 
 // ===== CONTACT FORM =====
-const contactForm = document.getElementById('contactForm');
-
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const subject = formData.get('subject');
-    const message = formData.get('message');
-
-    // WhatsApp integration
-    const phoneNumber = '919790168632';
-    const whatsappMessage = `*New Contact Form Submission*%0A%0A*Name:* ${name}%0A*Email:* ${email}%0A*Subject:* ${subject}%0A*Message:* ${message}`;
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${whatsappMessage}`;
-
-    // Open WhatsApp
-    window.open(whatsappURL, '_blank');
-
-    // Reset form
-    contactForm.reset();
-
-    // Show success message
-    alert('Thank you for your message! Redirecting to WhatsApp...');
-});
+// const contactForm = document.getElementById('contactForm');
+//
+// contactForm.addEventListener('submit', (e) => {
+//     e.preventDefault();
+//
+//     const formData = new FormData(contactForm);
+//     const name = formData.get('name');
+//     const email = formData.get('email');
+//     const subject = formData.get('subject');
+//     const message = formData.get('message');
+// });
 
 // ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     });
-});
 
 // ===== INTERSECTION OBSERVER FOR ANIMATIONS =====
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
 
 // Observe all sections
-document.querySelectorAll('section').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(50px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
-});
+    document.querySelectorAll('section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(50px)';
+        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(section);
+    });
 
 // ===== INITIALIZE ON PAGE LOAD =====
-window.addEventListener('load', () => {
-    animateSkills();
-    const heroSection = document.querySelector('.hero-section');
-    heroSection.style.opacity = '1';
-    heroSection.style.transform = 'translateY(0)';
-});
+    window.addEventListener('load', () => {
+        animateSkills();
+        const heroSection = document.querySelector('.hero-section');
+        heroSection.style.opacity = '1';
+        heroSection.style.transform = 'translateY(0)';
+    });
+
 // ===== SCRAMBLE TEXT EFFECT =====
-const typingText = document.querySelector('.typing-text');
-const texts = ['SOFTWARE DEVELOPER', 'WEB DEVELOPER','AI ENGINEER','GRAPHIC DESIGNER'];
-let textIndex = 0;
+    const typingText = document.querySelector('.typing-text');
+    const texts = ['SOFTWARE DEVELOPER', 'WEB DEVELOPER', 'AI ENGINEER', 'GRAPHIC DESIGNER'];
+    let textIndex = 0;
 
-const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-function scrambleEffect() {
-    const targetText = texts[textIndex];
-    let iterations = 0;
+    function scrambleEffect() {
+        const targetText = texts[textIndex];
+        let iterations = 0;
 
-    const interval = setInterval(() => {
-        typingText.textContent = targetText
-            .split('')
-            .map((char, index) => {
-                if (char === ' ') return ' ';
+        const interval = setInterval(() => {
+            typingText.textContent = targetText
+                .split('')
+                .map((char, index) => {
+                    if (char === ' ') return ' ';
 
-                if (index < iterations) {
-                    return targetText[index];
-                }
+                    if (index < iterations) {
+                        return targetText[index];
+                    }
 
-                return letters[Math.floor(Math.random() * 26)];
-            })
-            .join('');
+                    return letters[Math.floor(Math.random() * 26)];
+                })
+                .join('');
 
-        if (iterations >= targetText.length) {
-            clearInterval(interval);
+            if (iterations >= targetText.length) {
+                clearInterval(interval);
 
-            // Wait 3 seconds then switch to next text
-            setTimeout(() => {
-                textIndex = (textIndex + 1) % texts.length;
-                scrambleEffect();
-            }, 2000);
-        }
+                // Wait 3 seconds then switch to next text
+                setTimeout(() => {
+                    textIndex = (textIndex + 1) % texts.length;
+                    scrambleEffect();
+                }, 2000);
+            }
 
-        iterations += 1 / 3;
-    }, 30);
-}
+            iterations += 1 / 3;
+        }, 30);
+    }
 
 // Start scramble effect when page loads
-window.addEventListener('load', () => {
-    setTimeout(scrambleEffect, 1000);
-});
+    window.addEventListener('load', () => {
+        setTimeout(scrambleEffect, 1000);
+    });
+
