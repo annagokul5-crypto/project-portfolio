@@ -1037,10 +1037,16 @@ body.light-theme .skill-progress {
     flex: 1;
 }
 
-.contact-form form {
+.contact-form form{
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    /* box */
+    border: 1px solid var(--accent-yellow);
+    padding: 24px;
+    border-radius: 45px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
 
 .contact-form input,
@@ -1071,6 +1077,7 @@ body.light-theme .skill-progress {
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
+    font-family: 'Exo 2', sans-serif;
     transition: all 0.3s ease;
 }
 
@@ -1078,6 +1085,49 @@ body.light-theme .skill-progress {
     transform: scale(1.05);
     box-shadow: 0 8px 30px var(--accent-glow);
 }
+.contact-text {
+    text-align: center;
+    color: var(--accent-yellow);
+    font-size: 2.5rem;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .contact-container{
+        flex-direction: column;
+        align-items: center;   /* centers the two blocks (info + form) */
+        gap: 70px;
+    }
+
+    .contact-info,
+    .contact-form{
+        width: 100%;
+        max-width: 520px;      /* keeps it neat; adjust as you like */
+    }
+
+    /* Center contact details (icon + text) */
+    .contact-item{
+        justify-content: center;  /* centers the row content */
+        text-align: center;
+    }
+
+    /* Center the social icons row */
+    .social-links{
+        justify-content: center;
+        flex-wrap: wrap;          /* prevents overflow on small screens */
+    }
+
+    /* Optional: keep the form box centered and button centered */
+    .contact-form form{
+        margin: 0 auto;
+    }
+
+    .submit-btn{
+        align-self: center;       /* centers button inside the flex-column form */
+        width: fit-content;
+    }
+}
+
 
 /* ===== FOOTER ===== */
 .footer {
@@ -1210,4 +1260,64 @@ body.light-theme .skill-progress {
         flex-direction: column;
         gap: 15px;
     }
+}
+/* Project video link box */
+.video-section{
+    margin-top: 18px;
+    padding: 14px 16px;
+    /*border-radius: 14px;*/
+
+    /*background: var(--glass-bg);*/
+    /*border: 1px solid var(--glass-border);*/
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+/* The link styled like your theme buttons */
+.video-section a{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 14px;
+    border-radius: 12px;
+
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+
+    background: linear-gradient(135deg, var(--accent-yellow), rgba(255, 107, 53, 0.85));
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18), 0 0 18px var(--accent-glow);
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+/* Hover/active */
+.video-section a:hover{
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.22), 0 0 22px var(--accent-glow);
+}
+
+.video-section a:active{
+    transform: translateY(0px) scale(0.98);
+}
+
+/* Focus (keyboard accessible) */
+.video-section a:focus-visible{
+    outline: 2px solid var(--accent-yellow);
+    outline-offset: 3px;
+}
+
+/* Optional: small icon before text (FontAwesome) */
+.video-section a::before{
+    content: "\f144"; /* fa-play-circle (solid) */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
 }

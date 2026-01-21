@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WhatsappPdfController;
+use App\Http\Controllers\ProjectController;
+
 
 //Route::get('/', function () {
 //    return view('index');
@@ -43,3 +45,5 @@ Route::get('/', [PortfolioController::class, 'page']);
 
 
 //Route::get('/', [PortfolioController::class, 'index']);
+
+Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');

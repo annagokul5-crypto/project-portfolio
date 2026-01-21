@@ -48,7 +48,7 @@
                             <img src="{{ asset('images/3d.png') }}" alt="3D Character">
                         </div>
                         <div class="flip-card-back">
-                            <img src="{{ asset('images/real2.PNG') }}" alt="Real Image" >
+                            <img src="{{ asset('images/real3.PNG') }}" alt="Real Image" >
                         </div>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                             @endphp
 
 
-                            <a href="{{ $detailUrl }}" class="project-btn" title="View Project">
+                            <a href="{{ route('projects.show', $project->id) }}" class="project-btn" title="View Project">
                                 <i class="fas fa-eye"></i>
                             </a>
 
@@ -247,8 +247,8 @@
                         {{ session('status') }}
                     </div>
                 @endif
-
                 <form id="contactForm" method="POST" action="{{ route('contact.submit') }}">
+{{--                    <p class="contact-text">Let's Connect</p>--}}
                     @csrf
                     <input type="text"  name="name"           placeholder="Your Name" required>
                     <input type="email" name="email"          placeholder="Your Email" required>
@@ -264,14 +264,14 @@
 
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#skills">Skills</a>
-            <a href="#contact">Contact</a>
-        </div>
-        <p class="copyright">&copy; {{ $footerYear }} Gokulraju All Rights Reserved.</p>
-    </footer>
+{{--    <footer class="footer">--}}
+{{--        <div class="footer-links">--}}
+{{--            <a href="#home">Home</a>--}}
+{{--            <a href="#about">About</a>--}}
+{{--            <a href="#projects">Projects</a>--}}
+{{--            <a href="#skills">Skills</a>--}}
+{{--            <a href="#contact">Contact</a>--}}
+{{--        </div>--}}
+{{--        <p class="copyright">&copy; {{ $footerYear }} Gokulraju All Rights Reserved.</p>--}}
+{{--    </footer>--}}
 @endsection

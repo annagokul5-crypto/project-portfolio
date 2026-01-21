@@ -17,5 +17,23 @@
 @yield('content')
 <script src="{{ asset('js/main.js') }}"></script>
 @stack('scripts')
+{{--@php($footerYear = optional(\App\Models\Setting::find('footeryear'))->value ?? date('Y'))--}}
+
+<footer class="footer">
+    <div class="footer-links">
+        <a href="{{ url('/') }}#home">Home</a>
+        <a href="{{ url('/') }}#about">About</a>
+        <a href="{{ url('/') }}#projects">Projects</a>
+        <a href="{{ url('/') }}#skills">Skills</a>
+        <a href="{{ url('/') }}#contact">Contact</a>
+    </div>
+
+    <p class="copyright">
+        &copy; {{ $footerYear }} Gokulraju All Rights Reserved.
+    </p>
+</footer>
+
+
+
 </body>
 </html>

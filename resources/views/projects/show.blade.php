@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <!-- Floating Navigation Bar -->
+    <!-- Floating Navigation Bar (same style as your site) -->
     <nav class="floating-nav" id="navbar">
         <div class="nav-logo">
-            <img src="{{ asset('images/gr.jpg') }}" alt="Logo" class="logo-img" id="logoImg">
+            <img src="{{ asset('images/gj.png') }}" alt="Logo" class="logo-img" id="logoImg">
         </div>
+
         <ul class="nav-menu" id="navMenu">
             <li><a href="{{ url('/') }}#home" class="nav-link">Home</a></li>
             <li><a href="{{ url('/') }}#about" class="nav-link">About</a></li>
@@ -13,7 +14,6 @@
             <li><a href="{{ url('/') }}#skills" class="nav-link">Skills</a></li>
             <li><a href="{{ url('/') }}#contact" class="nav-link">Contact</a></li>
 
-            <!-- Theme Toggle for Mobile -->
             <li class="mobile-theme-toggle">
                 <div class="theme-toggle-mobile" id="themeToggleMobile">
                     <span class="theme-label">Theme</span>
@@ -40,57 +40,70 @@
     <!-- Project Detail Section -->
     <section class="project-detail-section">
         <div class="project-detail-container">
-            <!-- Project Title -->
-            @php
-                $project = \App\Models\Project::where('title', 'Kit Connect')->first();
-            @endphp
+
             <h1 class="section-title">{{ $project->title }}</h1>
-                <!-- Screenshots Gallery -->
+
+            <!-- Screenshots -->
             <div class="screenshots-section">
                 <h2 class="subsection-title">Project Screenshots</h2>
+
                 <div class="screenshots-grid">
-                    <!-- Screenshot Card 1 -->
-                    @php
-                        $shots = \App\Models\ProjectScreenshot::where('project_id', 6)->get();  // 2 = KIT Connect
-                    @endphp
-                @foreach($shots as $shot)
+                    @forelse($shots as $shot)
                         <div class="screenshot-card">
                             <div class="screenshot-image">
                                 <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">
                             </div>
                             <h3 class="screenshot-title">{{ $shot->title }}</h3>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="coming-soon">No screenshots added yet.</p>
+                    @endforelse
                 </div>
             </div>
-            <!-- Project Description -->
+
+            @if(!empty($project->video_url))
+                <div class="video-section">
+                    <a href="{{ $project->video_url }}" target="_blank" rel="noopener">
+                        Watch project video
+                    </a>
+                </div>
+            @endif
+
+            <!-- Description + Features -->
             <div class="description-section">
                 <h2 class="subsection-title">Project Description</h2>
-                <div class="description-content">
-                    <p>{{ $project->description ?? $project->short_description }}</p>
 
-                    <h3 class="feature-title">Key Features:</h3>
-                    <ul class="feature-list">
-                        @foreach(explode("\n", $project->features ?? '') as $feature)
-                            @if(trim($feature) !== '')
-                                <li>{{ trim($feature) }}</li>
-                            @endif
-                        @endforeach
-                    </ul>
+                <div class="description-content">
+                    <p>{{ $project->description ?? 'No description yet.' }}</p>
+
+                    @if(!empty($project->features))
+                        <h3 class="feature-title">Key Features:</h3>
+                        <ul class="feature-list">
+                            @foreach(explode("\n", $project->features) as $feature)
+                                @if(trim($feature) !== '')
+                                    <li>{{ trim($feature) }}</li>
+                                @endif
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
             </div>
 
-            <!-- Tools and Languages -->
+            <!-- Tools -->
             <div class="tools-section">
                 <h2 class="subsection-title">Tools & Languages Used</h2>
+
                 <div class="tools-list">
-                    @foreach(explode(',', $project->tools ?? '') as $tool)
-                        @if(trim($tool) !== '')
-                            <span class="tool-item">{{ trim($tool) }}</span>
-                        @endif
-                    @endforeach
+                    @php($tools = $project->tools ?? '')
+                    @forelse(array_filter(array_map('trim', explode(',', $tools))) as $tool)
+                        <span class="tool-item">{{ $tool }}</span>
+                    @empty
+                        <p class="coming-soon">Not added yet.</p>
+                    @endforelse
                 </div>
             </div>
+
+            <!-- Links -->
             <div class="link-section">
                 <h2 class="subsection-title">Website Link</h2>
                 @if($project->live_link)
@@ -99,26 +112,14 @@
                     <p class="coming-soon">Coming Soon</p>
                 @endif
             </div>
-                </div>
-        <!-- Back Button -->
-        <div class="back-button-container">
-            <a href="{{ url('/') }}#projects" class="back-btn">
-                <i class="fas fa-arrow-left"></i> Back to Projects
-            </a>
+
+            <!-- Back Button -->
+            <div class="back-button-container">
+                <a href="{{ url('/') }}#projects" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Projects
+                </a>
+            </div>
+
         </div>
     </section>
-
-    <!-- Footer -->
-{{--    <footer class="footer">--}}
-{{--        <div class="footer-links">--}}
-{{--            <a href="{{ url('/') }}#home">Home</a>--}}
-{{--            <a href="{{ url('/') }}#about">About</a>--}}
-{{--            <a href="{{ url('/') }}#projects">Projects</a>--}}
-{{--            <a href="{{ url('/') }}#skills">Skills</a>--}}
-{{--            <a href="{{ url('/') }}#contact">Contact</a>--}}
-{{--        </div>--}}
-{{--        <p class="copyright">--}}
-{{--            &copy; {{ $footerYear ?? date('Y') }} Gokulraju All Rights Reserved.--}}
-{{--        </p>--}}
-{{--    </footer>--}}
 @endsection

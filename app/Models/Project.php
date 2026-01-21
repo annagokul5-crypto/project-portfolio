@@ -19,9 +19,8 @@ class Project extends Model
         'github_link',
         'live_link',
         'order_index',
+        'video_url',
     ];
-
-
 
     protected $casts = [
         'technologies' => 'array'

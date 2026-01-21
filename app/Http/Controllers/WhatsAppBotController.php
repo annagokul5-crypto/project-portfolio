@@ -146,6 +146,9 @@ class WhatsAppBotController extends Controller
             '/^delete about photo$/i',
 
             '/^contact\s+(phone|email|whatsapp|linkedin|github|location)[:\s]+.+$/i',
+            '/^project video[:\s]+.+\|\s*https?:\/\/\S+$/i',
+            '/^project video\s+remove[:\s]+.+$/i',
+
         ];
 
         foreach ($patterns as $p) {
@@ -190,6 +193,33 @@ class WhatsAppBotController extends Controller
         }
         if ($cmd === 'send me form pdf' || $cmd === 'form pdf') {
             return $this->sendPdfViaWhatsApp();
+        }
+
+        // project video : Project Name | https://...
+        if (preg_match('/^project\s+video\s*:\s*(.+?)\s*\|\s*(https?:\/\/\S+)$/i', $command, $m)) {
+            $projectTitle = trim($m[1]);
+            $url = trim($m[2]);
+
+            $project = \App\Models\Project::whereRaw('LOWER(title) = ?', [strtolower($projectTitle)])->first();
+            if (!$project) return "Project not found: {$projectTitle}";
+
+            $v = \Illuminate\Support\Facades\Validator::make(['video_url' => $url], [
+                'video_url' => 'required|url',
+            ]);
+            if ($v->fails()) return "Invalid URL. Example:\nproject video : {$projectTitle} | https://...";
+
+            $project->update(['video_url' => $url]);
+            return "✅ Video link updated for: {$project->title}";
+        }
+// project video remove : Project Name
+        if (preg_match('/^project\s+video\s+remove\s*:\s*(.+)$/i', $command, $m)) {
+            $projectTitle = trim($m[1]);
+
+            $project = \App\Models\Project::whereRaw('LOWER(title) = ?', [strtolower($projectTitle)])->first();
+            if (!$project) return "Project not found: {$projectTitle}";
+
+            $project->update(['video_url' => null]);
+            return "✅ Video link removed for: {$project->title}";
         }
 
 // FOOTER:2025 to 2026
