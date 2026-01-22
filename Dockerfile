@@ -1,10 +1,9 @@
 FROM richarvey/nginx-php-fpm:3.1.6
 
-RUN composer global remove hirak/prestissimo --no-interaction || true
+# Install Node.js + npm for Vite build
+RUN apk add --no-cache nodejs-current npm
 
-
+WORKDIR /var/www/html
 COPY . /var/www/html
-
-RUN apk add --no-cache npm
 
 CMD ["/start.sh"]
