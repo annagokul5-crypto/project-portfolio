@@ -9,3 +9,7 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+# Keep Linux line endings for files used in Docker/Linux containers
+Dockerfile text eol=lf
+*.sh text eol=lf
+nginx/*.conf text eol=lf
