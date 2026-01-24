@@ -11,11 +11,10 @@ RUN apk add --no-cache nodejs-current npm php82-pdo_pgsql php82-pgsql
 WORKDIR /var/www/html
 COPY . /var/www/html
 
-# Use your nginx config (TCP fastcgi to 127.0.0.1:9000)
-COPY nginx/default.conf /etc/nginx/sites-available/default.conf
+
 
 # Backend deps (production)
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev --no-scripts
 
 # Frontend deps + build
 RUN npm ci || npm install
