@@ -4,11 +4,22 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WhatsappPdfController;
 use App\Http\Controllers\ProjectController;
+use App\Models\AboutContent;
+use App\Models\HeroContent;
 
 
 //Route::get('/', function () {
 //    return view('index');
 //});
+
+Route::get('/debug-db', function () {
+    return [
+        'db' => DB::selectOne('select current_database() as db, current_user as user'),
+        'about_count' => AboutContent::count(),
+        'hero_count' => HeroContent::count(),
+    ];
+});
+
 Route::get('/project/ecommerce', function () {
     return view('eview');
 });
