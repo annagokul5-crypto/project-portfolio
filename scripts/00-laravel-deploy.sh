@@ -15,17 +15,14 @@ chown -R nginx:nginx storage bootstrap/cache || true
 chmod -R 775 storage bootstrap/cache || true
 
 echo "STEP: migrate"
-php artisan migrate --force || true
+php artisan migrate --force
 
 echo "STEP: clear caches"
-php artisan config:clear || true
-php artisan cache:clear || true
-php artisan route:clear || true
-php artisan view:clear || true
+php artisan optimize:clear
 
 echo "STEP: optimize caches"
-php artisan config:cache || true
-php artisan route:cache || true
-php artisan view:cache || true
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 echo "DONE: 00-laravel-deploy.sh"
