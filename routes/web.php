@@ -11,13 +11,12 @@ use App\Models\HeroContent;
 //Route::get('/', function () {
 //    return view('index');
 //});
-
 Route::get('/debug-db', function () {
-    return [
+    return response()->json([
         'db' => DB::selectOne('select current_database() as db, current_user as user'),
         'about_count' => AboutContent::count(),
         'hero_count' => HeroContent::count(),
-    ];
+    ], 200);
 });
 
 Route::get('/project/ecommerce', function () {
