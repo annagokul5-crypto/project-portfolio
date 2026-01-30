@@ -48,7 +48,7 @@
                             <img src="{{ asset('images/3d.png') }}" alt="3D Character">
                         </div>
                         <div class="flip-card-back">
-                            <img src="{{ asset('images/real3.PNG') }}" alt="Real Image" >
+                            <img src="{{ asset('images/real3.png') }}" alt="Real Image" >
                         </div>
                     </div>
                 </div>
