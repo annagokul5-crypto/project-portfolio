@@ -58,7 +58,8 @@
                     @foreach($shots as $shot)
                         <div class="screenshot-card">
                             <div class="screenshot-image">
-                                <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">
+                                <img src="{{ url($shot->image_path) }}" alt="{{ $shot->title }}">
+{{--                                <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">--}}
                             </div>
                             <h3 class="screenshot-title">{{ $shot->title }}</h3>
                         </div>
