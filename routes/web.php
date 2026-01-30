@@ -13,11 +13,13 @@ use App\Models\HeroContent;
 //});
 Route::get('/debug-db', function () {
     return response()->json([
-        'db' => DB::selectOne('select current_database() as db, current_user as user'),
-        'about_count' => AboutContent::count(),
-        'hero_count' => HeroContent::count(),
-    ], 200);
+        'db' => DB::selectOne('select current_database() as db, current_user as user, current_schema() as schema'),
+        'search_path' => DB::selectOne("show search_path"),
+        'about_count' => \App\Models\AboutContent::count(),
+        'hero_count' => \App\Models\HeroContent::count(),
+    ]);
 });
+
 
 Route::get('/project/ecommerce', function () {
     return view('eview');

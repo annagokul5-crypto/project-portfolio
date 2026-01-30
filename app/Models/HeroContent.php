@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HeroContent extends Model
 {
-    protected $table = 'hero_content';
+    protected $table = 'my_portfolio.hero_content';
 
     protected $fillable = [
         'name',
