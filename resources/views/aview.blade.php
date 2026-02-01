@@ -57,7 +57,7 @@
                         <div class="screenshot-card">
                             <div class="screenshot-image">
 {{--                                <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">--}}
-                                <img src="{{ url($shot->image_path) }}" alt="{{ $shot->title }}">
+                                <img src="{{ str_starts_with($project->image, 'http') ? $project->image : asset($project->image) }}" alt="Project Image">
                             </div>
                             <h3 class="screenshot-title">{{ $shot->title }}</h3>
                         </div>
