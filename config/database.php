@@ -77,6 +77,9 @@ return [
             'schema'   => env('DB_SCHEMA', 'public'),
 //            'search_path' => 'public',
             'sslmode' => 'prefer',
+            'options' => [
+                \PDO::ATTR_EMULATE_PREPARES => true,
+            ],
         ],
 
         'sqlsrv' => [
