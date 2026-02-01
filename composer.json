@@ -12,6 +12,8 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "symfony/http-client": "^6.0",
+        "symfony/mailgun-mailer": "^6.0",
         "telegram-bot/api": "^2.5",
         "twilio/sdk": "^8.8"
     },
