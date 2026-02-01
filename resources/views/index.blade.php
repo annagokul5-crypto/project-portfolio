@@ -4,7 +4,7 @@
     <!-- Floating Navigation Bar -->
     <nav class="floating-nav" id="navbar">
         <div class="nav-logo">
-            <img src="{{ asset('images/gj.png') }}" alt="Logo" class="logo-img" id="logoImg">
+            <img src="{{ asset('images/gj.png') }}" alt="Logo"  class="logo-img" id="logoImg">
         </div>
         <ul class="nav-menu" id="navMenu">
             <li><a href="#home" class="nav-link">Home</a></li>

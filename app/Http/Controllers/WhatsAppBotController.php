@@ -17,6 +17,7 @@ use App\Models\ContactInfo;
 use App\Models\Setting;
 use App\Models\SkillCategory;
 use Twilio\Security\RequestValidator;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 
 
@@ -534,7 +535,6 @@ class WhatsAppBotController extends Controller
                 return $response;
             }
         }
-
         // ADD SCREENSHOT: Ecommerce website | Footer Page
         if (preg_match('/^add screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
             $projectName = trim($m[1]);
@@ -546,34 +546,24 @@ class WhatsAppBotController extends Controller
             $mediaUrl = request()->input('MediaUrl0');
             if (!$mediaUrl) return "⚠️ No image attached. Please send with an image.";
 
-            // Download image from Twilio (private URL)
-            $response = Http::withBasicAuth(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'))
-                ->get($mediaUrl);
+            try {
+                // NEW: Upload to Cloudinary
+                $uploadedFile = Cloudinary::upload($mediaUrl);
+                $secureUrl = $uploadedFile->getSecurePath();
 
-            if (!$response->ok()) {
-                Log::error('TWILIO DOWNLOAD ERROR', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
+                ProjectScreenshot::create([
+                    'project_id' => $project->id,
+                    'title'      => $shotTitle,
+                    'image_path' => $secureUrl, // Save the Cloudinary URL
                 ]);
-                return "⚠️ Failed to download image from Twilio.";
+
+                return "✅ Added screenshot '{$shotTitle}' to Cloudinary!";
+            } catch (\Exception $e) {
+                return "❌ Cloudinary Error: " . $e->getMessage();
             }
-
-            // Save into storage/app/public/screenshots
-            $ext = 'jpg';
-            $fileName = 'screenshots/'.uniqid('shot_').'.'.$ext;
-            Storage::disk('public')->put($fileName, $response->body());
-
-            // Store public path (served via /storage symlink)
-            ProjectScreenshot::create([
-                'project_id' => $project->id,
-                'title'      => $shotTitle,
-                'image_path' => 'storage/'.$fileName,
-            ]);
-
-            return "✅ Added screenshot '{$shotTitle}' for '{$projectName}'.";
         }
 
-// UPDATE SCREENSHOT: Ecommerce website | Footer Page
+        // UPDATE SCREENSHOT
         if (preg_match('/^update screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
             $projectName = trim($m[1]);
             $shotTitle   = trim($m[2]);
@@ -587,51 +577,139 @@ class WhatsAppBotController extends Controller
             $shot = ProjectScreenshot::where('project_id', $project->id)
                 ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
                 ->first();
-            if (!$shot) return "⚠️ Screenshot not found with title '{$shotTitle}' in '{$projectName}'.";
+            if (!$shot) return "⚠️ Screenshot not found: '{$shotTitle}'";
 
-            // Download new image
-            $response = Http::withBasicAuth(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'))
-                ->get($mediaUrl);
+            try {
+                // NEW: Upload to Cloudinary
+                $uploadedFile = Cloudinary::upload($mediaUrl);
+                $secureUrl = $uploadedFile->getSecurePath();
 
-            if (!$response->ok()) {
-                Log::error('TWILIO DOWNLOAD ERROR', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
+                $shot->update([
+                    'image_path' => $secureUrl,
                 ]);
-                return "⚠️ Failed to download image from Twilio.";
+
+                return "✅ Updated screenshot '{$shotTitle}' on Cloudinary!";
+            } catch (\Exception $e) {
+                return "❌ Cloudinary Error: " . $e->getMessage();
             }
+        }
+        // ABOUT PHOTO
+        if (preg_match('/^about photo$/i', $cmd)) {
+            $mediaUrl = request()->input('MediaUrl0');
+            if (! $mediaUrl) return "⚠️ Send this command with an image attached.";
 
-            // Optionally overwrite or create new file
-            $ext = 'jpg';
-            $fileName = 'screenshots/'.uniqid('shot_').'.'.$ext;
-            Storage::disk('public')->put($fileName, $response->body());
+            try {
+                // NEW: Upload to Cloudinary
+                $uploadedFile = Cloudinary::upload($mediaUrl);
+                $secureUrl = $uploadedFile->getSecurePath();
 
-            $shot->update([
-                'image_path' => 'storage/'.$fileName,
-            ]);
+                $about = AboutContent::first() ?? new AboutContent();
+                $about->image_path = $secureUrl;
+                $about->save();
 
-            return "✅ Updated screenshot '{$shotTitle}' for '{$projectName}'.";
+                return "✅ About image updated on Cloudinary.";
+            } catch (\Exception $e) {
+                return "❌ Cloudinary Error: " . $e->getMessage();
+            }
         }
 
+//        // ADD SCREENSHOT: Ecommerce website | Footer Page
+//        if (preg_match('/^add screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
+//            $projectName = trim($m[1]);
+//            $shotTitle   = trim($m[2]);
+//
+//            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+//            if (!$project) return "⚠️ Project not found: {$projectName}";
+//
+//            $mediaUrl = request()->input('MediaUrl0');
+//            if (!$mediaUrl) return "⚠️ No image attached. Please send with an image.";
+//
+//            // Download image from Twilio (private URL)
+//            $response = Http::withBasicAuth(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'))
+//                ->get($mediaUrl);
+//
+//            if (!$response->ok()) {
+//                Log::error('TWILIO DOWNLOAD ERROR', [
+//                    'status' => $response->status(),
+//                    'body'   => $response->body(),
+//                ]);
+//                return "⚠️ Failed to download image from Twilio.";
+//            }
+//
+//            // Save into storage/app/public/screenshots
+//            $ext = 'jpg';
+//            $fileName = 'screenshots/'.uniqid('shot_').'.'.$ext;
+//            Storage::disk('public')->put($fileName, $response->body());
+//
+//            // Store public path (served via /storage symlink)
+//            ProjectScreenshot::create([
+//                'project_id' => $project->id,
+//                'title'      => $shotTitle,
+//                'image_path' => 'storage/'.$fileName,
+//            ]);
+//
+//            return "✅ Added screenshot '{$shotTitle}' for '{$projectName}'.";
+//        }
 
-        // delete the footer page image in e-commerce web application
-        if (preg_match('/^delete the (.+) image in (.+)$/i', $command, $m)) {
-            $shotTitle   = trim($m[1]); // "footer page"
-            $projectName = trim($m[2]); // "e-commerce web application"
-
-            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
-            if (!$project) {
-                return "⚠️ Project not found: {$projectName}";
-            }
-
-            $deleted = ProjectScreenshot::where('project_id', $project->id)
-                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
-                ->delete();
-
-            return $deleted
-                ? "✅ Deleted {$shotTitle} image in {$projectName}."
-                : "⚠️ No image titled {$shotTitle} in {$projectName}.";
-        }
+// UPDATE SCREENSHOT: Ecommerce website | Footer Page
+//        if (preg_match('/^update screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
+//            $projectName = trim($m[1]);
+//            $shotTitle   = trim($m[2]);
+//
+//            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+//            if (!$project) return "⚠️ Project not found: {$projectName}";
+//
+//            $mediaUrl = request()->input('MediaUrl0');
+//            if (!$mediaUrl) return "⚠️ No image attached. Please send with a new image.";
+//
+//            $shot = ProjectScreenshot::where('project_id', $project->id)
+//                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
+//                ->first();
+//            if (!$shot) return "⚠️ Screenshot not found with title '{$shotTitle}' in '{$projectName}'.";
+//
+//            // Download new image
+//            $response = Http::withBasicAuth(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'))
+//                ->get($mediaUrl);
+//
+//            if (!$response->ok()) {
+//                Log::error('TWILIO DOWNLOAD ERROR', [
+//                    'status' => $response->status(),
+//                    'body'   => $response->body(),
+//                ]);
+//                return "⚠️ Failed to download image from Twilio.";
+//            }
+//
+//            // Optionally overwrite or create new file
+//            $ext = 'jpg';
+//            $fileName = 'screenshots/'.uniqid('shot_').'.'.$ext;
+//            Storage::disk('public')->put($fileName, $response->body());
+//
+//            $shot->update([
+//                'image_path' => 'storage/'.$fileName,
+//            ]);
+//
+//            return "✅ Updated screenshot '{$shotTitle}' for '{$projectName}'.";
+//        }
+//
+//
+//        // delete the footer page image in e-commerce web application
+//        if (preg_match('/^delete the (.+) image in (.+)$/i', $command, $m)) {
+//            $shotTitle   = trim($m[1]); // "footer page"
+//            $projectName = trim($m[2]); // "e-commerce web application"
+//
+//            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+//            if (!$project) {
+//                return "⚠️ Project not found: {$projectName}";
+//            }
+//
+//            $deleted = ProjectScreenshot::where('project_id', $project->id)
+//                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
+//                ->delete();
+//
+//            return $deleted
+//                ? "✅ Deleted {$shotTitle} image in {$projectName}."
+//                : "⚠️ No image titled {$shotTitle} in {$projectName}.";
+//        }
 // PROJECT SHORT DESCRIPTION
         if (preg_match('/^project short[:\s]+(.+?)\s*\|\s*(.+)$/i', $command, $m)) {
             $title = trim($m[1]);
