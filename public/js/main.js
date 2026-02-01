@@ -133,9 +133,14 @@ navLinks.forEach(link => {
 const flipCard = document.getElementById('flipCard');
 const clickMeBtn = document.getElementById('clickMeBtn');
 
-clickMeBtn.addEventListener('click', () => {
-    flipCard.classList.toggle('flipped');
-});
+// clickMeBtn.addEventListener('click', () => {
+//     flipCard.classList.toggle('flipped');
+// });
+if (clickMeBtn) {
+    clickMeBtn.addEventListener('click', () => {
+        flipCard.classList.toggle('flipped');
+    });
+}
 
 // ===== SKILL BARS ANIMATION =====
 const skillsSection = document.querySelector('.skills-section');

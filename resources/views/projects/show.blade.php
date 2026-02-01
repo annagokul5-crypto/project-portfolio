@@ -51,7 +51,7 @@
                     @forelse($shots as $shot)
                         <div class="screenshot-card">
                             <div class="screenshot-image">
-                                <img src="{{ str_starts_with($project->image, 'http') ? $project->image : asset($project->image) }}" alt="Project Image">
+                                <img src="{{ str_starts_with($shot->image_path, 'http') ? $shot->image_path : asset($shot->image_path) }}" alt="{{ $shot->title }}">
 {{--                                <img src="{{ asset($shot->image_path) }}" alt="{{ $shot->title }}">--}}
                             </div>
                             <h3 class="screenshot-title">{{ $shot->title }}</h3>
