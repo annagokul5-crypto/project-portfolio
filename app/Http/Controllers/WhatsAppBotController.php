@@ -149,6 +149,10 @@ class WhatsAppBotController extends Controller
             '/^contact\s+(phone|email|whatsapp|linkedin|github|location)[:\s]+.+$/i',
             '/^project video[:\s]+.+\|\s*https?:\/\/\S+$/i',
             '/^project video\s+remove[:\s]+.+$/i',
+            '/^add screenshot[:\s]+.+\|\s*.+$/i',
+            '/^update screenshot[:\s]+.+\|\s*.+$/i',
+            '/^delete screenshot[:\s]+.+\|\s*.+$/i',
+
 
         ];
 
@@ -535,64 +539,159 @@ class WhatsAppBotController extends Controller
                 return $response;
             }
         }
-        // ADD SCREENSHOT: Ecommerce website | Footer Page
-        if (preg_match('/^add screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
+        // ====================================================
+        // 1. ADD SCREENSHOT
+        // Format: add screenshot: AI Ecommerce | Dashboard
+        // ====================================================
+        if (preg_match('/^add screenshot[:\s]+(.+?)\s*\|\s*(.+)$/i', $command, $m)) {
             $projectName = trim($m[1]);
             $shotTitle   = trim($m[2]);
 
+            // Find Project
             $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
             if (!$project) return "⚠️ Project not found: {$projectName}";
 
+            // Check for Image
             $mediaUrl = request()->input('MediaUrl0');
-            if (!$mediaUrl) return "⚠️ No image attached. Please send with an image.";
+            if (!$mediaUrl) return "⚠️ No image attached. Please attach a photo.";
 
             try {
-                // NEW: Upload to Cloudinary
+                // Upload to Cloudinary
                 $uploadedFile = Cloudinary::upload($mediaUrl);
                 $secureUrl = $uploadedFile->getSecurePath();
 
+                // Create Record
                 ProjectScreenshot::create([
                     'project_id' => $project->id,
                     'title'      => $shotTitle,
-                    'image_path' => $secureUrl, // Save the Cloudinary URL
-                ]);
-
-                return "✅ Added screenshot '{$shotTitle}' to Cloudinary!";
-            } catch (\Exception $e) {
-                return "❌ Cloudinary Error: " . $e->getMessage();
-            }
-        }
-
-        // UPDATE SCREENSHOT
-        if (preg_match('/^update screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
-            $projectName = trim($m[1]);
-            $shotTitle   = trim($m[2]);
-
-            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
-            if (!$project) return "⚠️ Project not found: {$projectName}";
-
-            $mediaUrl = request()->input('MediaUrl0');
-            if (!$mediaUrl) return "⚠️ No image attached. Please send with a new image.";
-
-            $shot = ProjectScreenshot::where('project_id', $project->id)
-                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
-                ->first();
-            if (!$shot) return "⚠️ Screenshot not found: '{$shotTitle}'";
-
-            try {
-                // NEW: Upload to Cloudinary
-                $uploadedFile = Cloudinary::upload($mediaUrl);
-                $secureUrl = $uploadedFile->getSecurePath();
-
-                $shot->update([
                     'image_path' => $secureUrl,
                 ]);
 
-                return "✅ Updated screenshot '{$shotTitle}' on Cloudinary!";
+                return "✅ Added screenshot '{$shotTitle}' to '{$projectName}'!";
             } catch (\Exception $e) {
-                return "❌ Cloudinary Error: " . $e->getMessage();
+                return "❌ Upload Error: " . $e->getMessage();
             }
         }
+
+        // ====================================================
+        // 2. UPDATE SCREENSHOT
+        // Format: update screenshot: AI Ecommerce | Dashboard
+        // ====================================================
+        if (preg_match('/^update screenshot[:\s]+(.+?)\s*\|\s*(.+)$/i', $command, $m)) {
+            $projectName = trim($m[1]);
+            $shotTitle   = trim($m[2]);
+
+            // Find Project
+            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+            if (!$project) return "⚠️ Project not found: {$projectName}";
+
+            // Find Existing Screenshot
+            $shot = ProjectScreenshot::where('project_id', $project->id)
+                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
+                ->first();
+
+            if (!$shot) return "⚠️ Screenshot '{$shotTitle}' not found in '{$projectName}'.";
+
+            // Check for Image
+            $mediaUrl = request()->input('MediaUrl0');
+            if (!$mediaUrl) return "⚠️ No image attached. Please attach the new photo.";
+
+            try {
+                // Upload to Cloudinary
+                $uploadedFile = Cloudinary::upload($mediaUrl);
+                $secureUrl = $uploadedFile->getSecurePath();
+
+                // Update Record
+                $shot->update(['image_path' => $secureUrl]);
+
+                return "✅ Updated screenshot '{$shotTitle}' successfully!";
+            } catch (\Exception $e) {
+                return "❌ Upload Error: " . $e->getMessage();
+            }
+        }
+
+        // ====================================================
+        // 3. DELETE SCREENSHOT
+        // Format: delete screenshot: AI Ecommerce | Dashboard
+        // ====================================================
+        if (preg_match('/^delete screenshot[:\s]+(.+?)\s*\|\s*(.+)$/i', $command, $m)) {
+            $projectName = trim($m[1]);
+            $shotTitle   = trim($m[2]);
+
+            // Find Project
+            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+            if (!$project) return "⚠️ Project not found: {$projectName}";
+
+            // Find Screenshot
+            $shot = ProjectScreenshot::where('project_id', $project->id)
+                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
+                ->first();
+
+            if (!$shot) return "⚠️ Screenshot '{$shotTitle}' not found in '{$projectName}'.";
+
+            // Delete Record
+            $shot->delete();
+
+            return "✅ Deleted screenshot '{$shotTitle}' from '{$projectName}'.";
+        }
+        // ADD SCREENSHOT: Ecommerce website | Footer Page [ new after cloudinary ]
+//        if (preg_match('/^add screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
+//            $projectName = trim($m[1]);
+//            $shotTitle   = trim($m[2]);
+//
+//            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+//            if (!$project) return "⚠️ Project not found: {$projectName}";
+//
+//            $mediaUrl = request()->input('MediaUrl0');
+//            if (!$mediaUrl) return "⚠️ No image attached. Please send with an image.";
+//
+//            try {
+//                // NEW: Upload to Cloudinary
+//                $uploadedFile = Cloudinary::upload($mediaUrl);
+//                $secureUrl = $uploadedFile->getSecurePath();
+//
+//                ProjectScreenshot::create([
+//                    'project_id' => $project->id,
+//                    'title'      => $shotTitle,
+//                    'image_path' => $secureUrl, // Save the Cloudinary URL
+//                ]);
+//
+//                return "✅ Added screenshot '{$shotTitle}' to Cloudinary!";
+//            } catch (\Exception $e) {
+//                return "❌ Cloudinary Error: " . $e->getMessage();
+//            }
+//        }
+
+//        // UPDATE SCREENSHOT [ new after cloudinary]
+//        if (preg_match('/^update screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
+//            $projectName = trim($m[1]);
+//            $shotTitle   = trim($m[2]);
+//
+//            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+//            if (!$project) return "⚠️ Project not found: {$projectName}";
+//
+//            $mediaUrl = request()->input('MediaUrl0');
+//            if (!$mediaUrl) return "⚠️ No image attached. Please send with a new image.";
+//
+//            $shot = ProjectScreenshot::where('project_id', $project->id)
+//                ->whereRaw('LOWER(title) = ?', [strtolower($shotTitle)])
+//                ->first();
+//            if (!$shot) return "⚠️ Screenshot not found: '{$shotTitle}'";
+//
+//            try {
+//                // NEW: Upload to Cloudinary
+//                $uploadedFile = Cloudinary::upload($mediaUrl);
+//                $secureUrl = $uploadedFile->getSecurePath();
+//
+//                $shot->update([
+//                    'image_path' => $secureUrl,
+//                ]);
+//
+//                return "✅ Updated screenshot '{$shotTitle}' on Cloudinary!";
+//            } catch (\Exception $e) {
+//                return "❌ Cloudinary Error: " . $e->getMessage();
+//            }
+//        }
         // ABOUT PHOTO
         if (preg_match('/^about photo$/i', $cmd)) {
             $mediaUrl = request()->input('MediaUrl0');
