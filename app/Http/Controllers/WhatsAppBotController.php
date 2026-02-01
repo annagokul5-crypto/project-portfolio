@@ -152,6 +152,8 @@ class WhatsAppBotController extends Controller
             '/^add screenshot[:\s]+.+\|\s*.+$/i',
             '/^update screenshot[:\s]+.+\|\s*.+$/i',
             '/^delete screenshot[:\s]+.+\|\s*.+$/i',
+            '/^list screenshots[:\s]+.+$/i',
+            '/^delete screenshot[:\s]+\d+$/i',
 
 
         ];
@@ -633,6 +635,45 @@ class WhatsAppBotController extends Controller
             $shot->delete();
 
             return "✅ Deleted screenshot '{$shotTitle}' from '{$projectName}'.";
+        }
+
+        // ====================================================
+        // 4. LIST SCREENSHOTS (To find the ID)
+        // Format: list screenshots: Ecommerce Website
+        // ====================================================
+        if (preg_match('/^list screenshots[:\s]+(.+)$/i', $command, $m)) {
+            $projectName = trim($m[1]);
+
+            $project = Project::whereRaw('LOWER(title) = ?', [strtolower($projectName)])->first();
+            if (!$project) return "⚠️ Project not found: {$projectName}";
+
+            $shots = ProjectScreenshot::where('project_id', $project->id)->get();
+
+            if ($shots->isEmpty()) {
+                return "📂 No screenshots found for '{$project->title}'.";
+            }
+
+            $msg = "🖼️ Screenshots for {$project->title}:\n";
+            foreach ($shots as $shot) {
+                // Shows ID so you can use it to delete
+                $msg .= "🆔 *{$shot->id}* - {$shot->title}\n";
+            }
+            return $msg;
+        }
+
+        // ====================================================
+        // 5. DELETE SCREENSHOT BY ID (The "Emergency" Fix)
+        // Format: delete screenshot: 15
+        // ====================================================
+        if (preg_match('/^delete screenshot[:\s]+(\d+)$/i', $command, $m)) {
+            $id = (int) $m[1];
+
+            $shot = ProjectScreenshot::find($id);
+            if (!$shot) return "❌ Screenshot ID {$id} not found.";
+
+            $shot->delete();
+
+            return "✅ Screenshot deleted (ID: {$id}).";
         }
         // ADD SCREENSHOT: Ecommerce website | Footer Page [ new after cloudinary ]
 //        if (preg_match('/^add screenshot[:\s]+(.+)\s*\|\s*(.+)$/i', $command, $m)) {
