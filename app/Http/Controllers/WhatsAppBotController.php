@@ -189,18 +189,72 @@ class WhatsAppBotController extends Controller
 
         // HELP
         if ($cmd === 'help') {
-            return "🤖 Portfolio Admin Bot\n\n"
-                . "Commands:\n"
-                . "• help - Show this message\n"
-                . "• add skill: [name] - Add a skill\n"
+            return "🤖 *Portfolio Admin Bot Commands*\n\n"
+
+                . "📌 *GENERAL*\n"
+                . "• footer: [year] - Set footer year\n"
+                . "• form pdf - Get contact form submissions PDF\n\n"
+
+                . "🛠 *SKILLS*\n"
                 . "• list skills - Show all skills\n"
-                . "• add project: [name] - Add a project\n"
-                . "• list projects - Show projects"
-                ;
+                . "• skill: [Name] | [Category] | [Percent]\n"
+                . "• delete skill: [Name] | [Category]\n\n"
 
+                . "📂 *PROJECTS (Basics)*\n"
+                . "• list projects - Show all projects\n"
+                . "• add project: [Name]\n"
+                . "• update project: [Old Name] | [New Name]\n"
+                . "• delete project: [Name]\n"
+                . "• project status: [Name] | [published/draft/ongoing]\n"
+                . "• project order: [Name] | [Number]\n\n"
 
+                . "📝 *PROJECT DETAILS*\n"
+                . "• project details: [Name] - Show info\n"
+                . "• project short: [Name] | [Text]\n"
+                . "• project desc: [Name] | [Text]\n"
+                . "• project features: [Name] | [Text]\n"
+                . "• project tools: [Name] | [Tool1, Tool2]\n"
+                . "• delete short: [Name] - Remove short desc\n"
+                . "• delete desc: [Name] - Remove full desc\n"
+                . "• delete features: [Name] - Remove features\n"
+                . "• delete tools: [Name] - Remove tools\n\n"
 
+                . "🔗 *PROJECT LINKS*\n"
+                . "• project live: [Name] | [URL]\n"
+                . "• project github: [Name] | [URL]\n"
+                . "• project video: [Name] | [URL]\n"
+                . "• delete live: [Name] - Remove live link\n"
+                . "• delete github: [Name] - Remove GitHub link\n"
+                . "• project video remove: [Name] - Remove video\n\n"
+
+                . "🖼 *PROJECT SCREENSHOTS*\n"
+                . "• list screenshots: [Project Name] - Get IDs\n"
+                . "• add screenshot: [Project] | [Title] - (Attach Image)\n"
+                . "• update screenshot: [Project] | [Title] - (Attach Image)\n"
+                . "• delete screenshot: [Project] | [Title]\n"
+                . "• delete screenshot: [ID] - (Delete by ID)\n\n"
+
+                . "🦸 *HERO SECTION*\n"
+                . "• show hero\n"
+                . "• hero name: [Name]\n"
+                . "• hero role: [Role]\n"
+                . "• hero title: [Text]\n"
+                . "• hero description: [Text]\n"
+                . "• hero objective: [Text]\n"
+                . "• hero resume: [URL]\n\n"
+
+                . "ℹ️ *ABOUT SECTION*\n"
+                . "• show about\n"
+                . "• about text: [Text]\n"
+                . "• about photo - (Attach Image)\n"
+                . "• delete about text\n"
+                . "• delete about photo\n\n"
+
+                . "📞 *CONTACT INFO*\n"
+                . "• show contact\n"
+                . "• contact [phone/email/whatsapp/linkedin/github/location]: [Value]";
         }
+
         if ($cmd === 'send me form pdf' || $cmd === 'form pdf') {
             return $this->sendPdfViaWhatsApp();
         }
