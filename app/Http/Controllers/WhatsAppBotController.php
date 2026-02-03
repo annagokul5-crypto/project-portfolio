@@ -189,8 +189,13 @@ class WhatsAppBotController extends Controller
 
         // HELP
         if ($cmd === 'help') {
-            return "🤖 *Portfolio Admin Bot Commands*\n\n"
-
+            return "🤖 Portfolio Admin Bot\n\n"
+                . "Commands:\n"
+                . "• help - Show this message\n"
+                . "• add skill: [name] - Add a skill\n"
+                . "• list skills - Show all skills\n"
+                . "• add project: [name] - Add a project\n"
+                . "• list projects - Show projects"
                 . "📌 *GENERAL*\n"
                 . "• footer: [year] - Set footer year\n"
                 . "• form pdf - Get contact form submissions PDF\n\n"
