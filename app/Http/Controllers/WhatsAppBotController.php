@@ -97,7 +97,7 @@ class WhatsAppBotController extends Controller
         $t = trim($text);
 
         // Exact commands (no params)
-        if (preg_match('/^(help|list skills|list projects|show hero|show hero content|show about|show contact|send me form pdf|form pdf)$/i', $t)) {
+        if (preg_match('/^(help|help skills|help projects|help details|help links|help screenshots|help hero|help about|list skills|list projects|show hero|show hero content|show about|show contact|send me form pdf|form pdf)$/i', $t)) {
             return true;
         }
 
@@ -188,76 +188,169 @@ class WhatsAppBotController extends Controller
         $cmd = strtolower(trim($command));
 
         // HELP
+//        if ($cmd === 'help') {
+//            return "🤖 Portfolio Admin Bot\n\n"
+//                . "Commands:\n"
+//                . "• help - Show this message\n"
+//                . "• add skill: [name] - Add a skill\n"
+//                . "• list skills - Show all skills\n"
+//                . "• add project: [name] - Add a project\n"
+//                . "• list projects - Show projects"
+//                . "📌 *GENERAL*\n"
+//                . "• footer: [year] - Set footer year\n"
+//                . "• form pdf - Get contact form submissions PDF\n\n"
+//                . "🛠 *SKILLS*\n"
+//                . "• list skills - Show all skills\n"
+//                . "• skill: [Name] | [Category] | [Percent]\n"
+//                . "• delete skill: [Name] | [Category]\n\n"
+//                . "📂 *PROJECTS (Basics)*\n"
+//                . "• list projects - Show all projects\n"
+//                . "• add project: [Name]\n"
+//                . "• update project: [Old Name] | [New Name]\n"
+//                . "• delete project: [Name]\n"
+//                . "• project status: [Name] | [published/draft/ongoing]\n"
+//                . "• project order: [Name] | [Number]\n\n"
+//                . "📝 *PROJECT DETAILS*\n"
+//                . "• project details: [Name] - Show info\n"
+//                . "• project short: [Name] | [Text]\n"
+//                . "• project desc: [Name] | [Text]\n"
+//                . "• project features: [Name] | [Text]\n"
+//                . "• project tools: [Name] | [Tool1, Tool2]\n"
+//                . "• delete short: [Name] - Remove short desc\n"
+//                . "• delete desc: [Name] - Remove full desc\n"
+//                . "• delete features: [Name] - Remove features\n"
+//                . "• delete tools: [Name] - Remove tools\n\n"
+//                . "🔗 *PROJECT LINKS*\n"
+//                . "• project live: [Name] | [URL]\n"
+//                . "• project github: [Name] | [URL]\n"
+//                . "• project video: [Name] | [URL]\n"
+//                . "• delete live: [Name] - Remove live link\n"
+//                . "• delete github: [Name] - Remove GitHub link\n"
+//                . "• project video remove: [Name] - Remove video\n\n"
+//                . "🖼 *PROJECT SCREENSHOTS*\n"
+//                . "• list screenshots: [Project Name] - Get IDs\n"
+//                . "• add screenshot: [Project] | [Title] - (Attach Image)\n"
+//                . "• update screenshot: [Project] | [Title] - (Attach Image)\n"
+//                . "• delete screenshot: [Project] | [Title]\n"
+//                . "• delete screenshot: [ID] - (Delete by ID)\n\n"
+//                . "🦸 *HERO SECTION*\n"
+//                . "• show hero\n"
+//                . "• hero name: [Name]\n"
+//                . "• hero role: [Role]\n"
+//                . "• hero title: [Text]\n"
+//                . "• hero description: [Text]\n"
+//                . "• hero objective: [Text]\n"
+//                . "• hero resume: [URL]\n\n"
+//                . "ℹ️ *ABOUT SECTION*\n"
+//                . "• show about\n"
+//                . "• about text: [Text]\n"
+//                . "• about photo - (Attach Image)\n"
+//                . "• delete about text\n"
+//                . "• delete about photo\n\n"
+//                . "📞 *CONTACT INFO*\n"
+//                . "• show contact\n"
+//                . "• contact [phone/email/whatsapp/linkedin/github/location]: [Value]";
+//        }
+//
+//        // ====================================================
+        // HELP SYSTEM (Split into Categories to fix 1600 limit)
+        // ====================================================
+
+        // 1. MAIN MENU
+//        if ($cmd === 'help') {
+//            return "🤖 *Portfolio Bot Help Menu*\n"
+//                . "Choose a category to see commands:\n\n"
+//                . "📌 Type *help general* (Footer, PDF, Contact)\n"
+//                . "🛠 Type *help skills* (Add, List, Delete)\n"
+//                . "📂 Type *help projects* (Add, List, Status, Order)\n"
+//                . "📝 Type *help details* (Desc, Features, Tools)\n"
+//                . "🔗 Type *help links* (Live, GitHub, Video)\n"
+//                . "🖼 Type *help screenshots* (Add, Delete, List)\n"
+//                . "🦸 Type *help hero* (Hero Section)\n"
+//                . "ℹ️ Type *help about* (About Section)";
+//        }
+
+        // 2. SUB-MENUS
         if ($cmd === 'help') {
-            return "🤖 Portfolio Admin Bot\n\n"
-                . "Commands:\n"
-                . "• help - Show this message\n"
-                . "• add skill: [name] - Add a skill\n"
-                . "• list skills - Show all skills\n"
-                . "• add project: [name] - Add a project\n"
-                . "• list projects - Show projects"
-                . "📌 *GENERAL*\n"
-                . "• footer: [year] - Set footer year\n"
-                . "• form pdf - Get contact form submissions PDF\n\n"
+            return "📌 *GENERAL & CONTACT*\n\n"
+                . "• footer: [year]\n"
+                . "• form pdf\n"
+                . "• show contact\n"
+                . "• contact phone: [Value]\n"
+                . "• contact email: [Value]\n"
+                . "• contact whatsapp: [Value]\n"
+                . "• contact linkedin: [Value]\n"
+                . "• contact github: [Value]\n"
+                . "• contact location: [Value]";
+        }
 
-                . "🛠 *SKILLS*\n"
-                . "• list skills - Show all skills\n"
+        if ($cmd === 'help skills') {
+            return "🛠 *SKILLS COMMANDS*\n\n"
+                . "• list skills\n"
                 . "• skill: [Name] | [Category] | [Percent]\n"
-                . "• delete skill: [Name] | [Category]\n\n"
+                . "• delete skill: [Name] | [Category]";
+        }
 
-                . "📂 *PROJECTS (Basics)*\n"
-                . "• list projects - Show all projects\n"
+        if ($cmd === 'help projects') {
+            return "📂 *PROJECT BASICS*\n\n"
+                . "• list projects\n"
                 . "• add project: [Name]\n"
                 . "• update project: [Old Name] | [New Name]\n"
                 . "• delete project: [Name]\n"
                 . "• project status: [Name] | [published/draft/ongoing]\n"
-                . "• project order: [Name] | [Number]\n\n"
+                . "• project order: [Name] | [Number]";
+        }
 
-                . "📝 *PROJECT DETAILS*\n"
-                . "• project details: [Name] - Show info\n"
+        if ($cmd === 'help details') {
+            return "📝 *PROJECT DETAILS*\n\n"
+                . "• project details: [Name]\n"
                 . "• project short: [Name] | [Text]\n"
                 . "• project desc: [Name] | [Text]\n"
                 . "• project features: [Name] | [Text]\n"
                 . "• project tools: [Name] | [Tool1, Tool2]\n"
-                . "• delete short: [Name] - Remove short desc\n"
-                . "• delete desc: [Name] - Remove full desc\n"
-                . "• delete features: [Name] - Remove features\n"
-                . "• delete tools: [Name] - Remove tools\n\n"
+                . "• delete short: [Name]\n"
+                . "• delete desc: [Name]\n"
+                . "• delete features: [Name]\n"
+                . "• delete tools: [Name]";
+        }
 
-                . "🔗 *PROJECT LINKS*\n"
+        if ($cmd === 'help links') {
+            return "🔗 *PROJECT LINKS*\n\n"
                 . "• project live: [Name] | [URL]\n"
                 . "• project github: [Name] | [URL]\n"
                 . "• project video: [Name] | [URL]\n"
-                . "• delete live: [Name] - Remove live link\n"
-                . "• delete github: [Name] - Remove GitHub link\n"
-                . "• project video remove: [Name] - Remove video\n\n"
+                . "• delete live: [Name]\n"
+                . "• delete github: [Name]\n"
+                . "• project video remove: [Name]";
+        }
 
-                . "🖼 *PROJECT SCREENSHOTS*\n"
-                . "• list screenshots: [Project Name] - Get IDs\n"
-                . "• add screenshot: [Project] | [Title] - (Attach Image)\n"
-                . "• update screenshot: [Project] | [Title] - (Attach Image)\n"
+        if ($cmd === 'help screenshots') {
+            return "🖼 *SCREENSHOTS*\n\n"
+                . "• list screenshots: [Project Name]\n"
+                . "• add screenshot: [Project] | [Title] (Attach Image)\n"
+                . "• update screenshot: [Project] | [Title] (Attach Image)\n"
                 . "• delete screenshot: [Project] | [Title]\n"
-                . "• delete screenshot: [ID] - (Delete by ID)\n\n"
+                . "• delete screenshot: [ID] (Delete by ID)";
+        }
 
-                . "🦸 *HERO SECTION*\n"
+        if ($cmd === 'help hero') {
+            return "🦸 *HERO SECTION*\n\n"
                 . "• show hero\n"
                 . "• hero name: [Name]\n"
                 . "• hero role: [Role]\n"
                 . "• hero title: [Text]\n"
                 . "• hero description: [Text]\n"
                 . "• hero objective: [Text]\n"
-                . "• hero resume: [URL]\n\n"
+                . "• hero resume: [URL]";
+        }
 
-                . "ℹ️ *ABOUT SECTION*\n"
+        if ($cmd === 'help about') {
+            return "ℹ️ *ABOUT SECTION*\n\n"
                 . "• show about\n"
                 . "• about text: [Text]\n"
-                . "• about photo - (Attach Image)\n"
+                . "• about photo (Attach Image)\n"
                 . "• delete about text\n"
-                . "• delete about photo\n\n"
-
-                . "📞 *CONTACT INFO*\n"
-                . "• show contact\n"
-                . "• contact [phone/email/whatsapp/linkedin/github/location]: [Value]";
+                . "• delete about photo";
         }
 
         if ($cmd === 'send me form pdf' || $cmd === 'form pdf') {
